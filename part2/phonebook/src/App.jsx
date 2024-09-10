@@ -1,4 +1,7 @@
 import { useEffect, useState } from 'react'
+import Persons from './components/Persons'
+import Personform from './components/PersonForm'
+import Filter from './components/Filter'
 
 const App = () => {
 
@@ -32,7 +35,7 @@ const App = () => {
 
   const filterByName = (e) => {
     e.preventDefault()
-    
+
     setFilteredPersons(persons.filter(person => person.name.toLowerCase().includes(e.target.value.toLowerCase())))
   }
 
@@ -45,26 +48,12 @@ const App = () => {
     <div>
       <div>debug: {newPerson.name}</div>
       <h2>Phonebook</h2>
-      <div>
-          filter by name <input onChange={filterByName} type="text" />
-      </div>
+        <Filter filterByName={filterByName} />
       <br />
       <h3>Add a new person</h3>
-      <form>
-        <div>
-          name: <input id="name" onChange={handleInput} />
-        </div>
-        <div>
-          phone number: <input id="number" onChange={handleInput} />
-        </div>
-        <div>
-          <button type="submit" onClick={handleAddBtn}>add</button>
-        </div>
-      </form>
+        <Personform handleInput={handleInput} handleAddBtn={handleAddBtn} />
       <h2>Numbers</h2>
-      { filteredPersons ?
-      filteredPersons.map(person => <p key={person.name}>{person.name} - {person.number}</p>) :
-      persons.map(person => <p key={person.name}>{person.name} - {person.number}</p>)}
+        <Persons filteredPersons={filteredPersons} persons={persons} />
     </div>
   )
 }
