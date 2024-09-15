@@ -2,21 +2,33 @@ import { useEffect, useState } from 'react'
 import Persons from './components/Persons'
 import Personform from './components/PersonForm'
 import Filter from './components/Filter'
+import axios from 'axios'
+import phoneBookService from './services/persons'
+import { v4 as uuidv4 } from 'uuid';
 
 const App = () => {
 
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
-  ])
 
-  const [filteredPersons, setFilteredPersons] = useState()
-  console.log(Boolean(filteredPersons))
+  const [persons, setPersons] = useState([])
 
-  const [newPerson, setNewPerson] = useState({name:"", number:""})
+  const fetchAllData = () => {
+    phoneBookService
+    .getAll()
+    .then(response => setPersons(response.data))
+  }
+
+  useEffect(()=>{
+    fetchAllData()
+  },[])
+
   
+  const [filteredPersons, setFilteredPersons] = useState()
+  
+  const [newPerson, setNewPerson] = useState({name:"", number:"", id:uuidv4()})
+  
+  useEffect(()=>{
+    console.log(newPerson);
+  },[newPerson])
 
   const handleInput = (e) => {
     e.preventDefault()
@@ -29,8 +41,17 @@ const App = () => {
     if(persons.find(person => person.name === newPerson.name) ? true : false){
       return alert(`${newPerson.name} is already added to phonebook`)
     }
-
     setPersons([...persons, newPerson])
+
+    axios
+    phoneBookService
+    .create(newPerson)
+    setNewPerson({name:"", number:"", id: uuidv4()})
+  }
+
+  const deletePerson = (id) => {
+    phoneBookService.deletePerson(id)
+    setPersons(persons.filter(person => person.id !== id))
   }
 
   const filterByName = (e) => {
@@ -39,11 +60,6 @@ const App = () => {
     setFilteredPersons(persons.filter(person => person.name.toLowerCase().includes(e.target.value.toLowerCase())))
   }
 
-  useEffect(()=>{
-    console.log(persons)
-    console.log(newPerson)
-  }, [newPerson])
-
   return (
     <div>
       <div>debug: {newPerson.name}</div>
@@ -51,9 +67,9 @@ const App = () => {
         <Filter filterByName={filterByName} />
       <br />
       <h3>Add a new person</h3>
-        <Personform handleInput={handleInput} handleAddBtn={handleAddBtn} />
+        <Personform handleInput={handleInput} handleAddBtn={handleAddBtn} newPerson={newPerson} />
       <h2>Numbers</h2>
-        <Persons filteredPersons={filteredPersons} persons={persons} />
+        <Persons filteredPersons={filteredPersons} persons={persons} deletePerson={deletePerson} />
     </div>
   )
 }
