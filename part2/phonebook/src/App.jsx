@@ -11,6 +11,8 @@ const App = () => {
 
   const [persons, setPersons] = useState([])
 
+  const [errorMessage, setErrorMessage] = useState(null)
+
   const fetchAllData = () => {
     phoneBookService
     .getAll()
@@ -46,7 +48,11 @@ const App = () => {
     axios
     phoneBookService
     .create(newPerson)
-    setNewPerson({name:"", number:"", id: uuidv4()})
+    .then( setNewPerson({name:"", number:"", id: uuidv4()}))
+    .catch(error => {
+      console.log(error)
+      setErrorMessage(error.response.data.error)
+    })
   }
 
   const deletePerson = (id) => {
@@ -62,7 +68,7 @@ const App = () => {
 
   return (
     <div>
-      <div>debug: {newPerson.name}</div>
+      <div>{errorMessage ? <h2>{errorMessage}</h2> : null }</div>
       <h2>Phonebook</h2>
         <Filter filterByName={filterByName} />
       <br />
