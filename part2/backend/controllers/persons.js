@@ -1,12 +1,14 @@
 const personsRouter = require('express').Router()
 const Person = require('../models/person')
 
-personsRouter.get('/', (request,response) => {
-  response.send('<h1>Health check ok</h1>')
+personsRouter.get('/', (request, response) => {
+  Person.find({}).then(persons => {
+    response.json(persons)
+  })
 })
 
 personsRouter.get('/info', (request, response) => {
-  response.send(`<h2>Phonebook has ${persons.length} contacts</h2>`)
+  response.send(`<h2>Phonebook has  contacts</h2>`)
 })
 
 personsRouter.get('/api/persons', (request, response) => {

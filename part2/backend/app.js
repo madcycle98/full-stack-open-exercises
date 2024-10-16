@@ -1,11 +1,7 @@
-const personRouter = require('./controllers/persons')
-
-
 const express = require('express')
-const cors = require('cors')
-const app = express()
-const Person = require('./models/person')
 const config = require('./utils/config')
+const app = express()
+const cors = require('cors')
 const logger = require('./utils/logger')
 const personRouter = require('./controllers/persons')
 const middleware = require('./utils/middleware')
@@ -22,8 +18,6 @@ mongoose.connect(config.MONGODB_URI)
   .catch((error) => {
     logger.error('error connecting to MongoDB:', error.message)
   })
-
-app.use(middleware.unknownEndpoint)
 
 app.use(cors())
 app.use(express.json())
